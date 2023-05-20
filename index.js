@@ -5,14 +5,13 @@ const _ = require('lodash');
 
 const app = express();
 
-const PASSWORD = process.env.PASSWORD;
 
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(express.static("public"));
 
-mongoose.connect("mongodb+srv://admin-gaurav:${PASSWORD}@cluster0.hozaezv.mongodb.net/todoDB");
+mongoose.connect("mongodb+srv://admin-gaurav:gaurav123@cluster0.hozaezv.mongodb.net/todoDB");
 
 const itemSchema = new mongoose.Schema({
   name: String,
