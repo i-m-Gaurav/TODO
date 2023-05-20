@@ -25,6 +25,8 @@
                         <input type="checkbox" value="<%= item._id %>" name="checkbox" onchange="this.form.submit()">
                         <p><%= item.name %></p>
                     </div>
+
+                    <input type="hidden" name="listName" value ="<%= ListTitle %>">
                 </form>
                 
            
@@ -39,7 +41,7 @@
         <form action="/" method="post">
             <div class="input_btn">
                 <input type="text" name="add" placeholder="Add New Item" required>
-                <button type="submit" name="list" value=<%= ListTitle %>><i class="fas fa-plus"></i></button>
+                <button type="submit" name="list" value="<%= ListTitle %>"><i class="fas fa-plus"></i></button>
             </div>
         </form>
     </div>
