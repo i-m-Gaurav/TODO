@@ -1,61 +1,82 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-
+const mongoose = require("mongoose");
 const app = express();
 
-app.use(bodyParser.urlencoded({extended:true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(express.static("public"));
 
-app.set("view engine","ejs");
+mongoose.connect("mongodb://localhost:27017/todoDB");
 
-let items = [];
-let workItems= [];
-
-app.get("/", function(req,res){
-
-    var today = new Date();
-    var currentDay = today.toLocaleDateString('en-US', { weekday: 'long' , day: 'numeric', month: 'long'});
-    var day = "";
-
-    if(currentDay === 6 || currentDay === 0){
-        day  = currentDay;
-
-    }else{
-        day = currentDay;
-    }
-
-    res.render("list",{ListTitle: day,newItem : items});
+const listSchema = new mongoose.Schema({
+  name: String,
 });
 
-app.post("/", function(req,res){
+const Item = mongoose.model("Item", listSchema);
 
-    console.log(req.body)
-    let item = req.body.add;
+const item1 = new Item({
+  name: "Buy Food",
+});
+const item2 = new Item({
+  name: "Cook Food",
+});
+const item3 = new Item({
+  name: "Eat Food",
+});
 
-    if(req.body.list === "Work"){
-workItems.push(item);
-res.redirect("/work")
+const defaultItems = [item1];
+
+app.set("view engine", "ejs");
+
+app.get("/", function (req, res) {
+  Item.find({}).then((foundItem) => {
+    if (foundItem.length === 0) {
+      //   Item.insertMany(defaultItems);
+      //   res.redirect("/");
+      res.render("list", { ListTitle: "Today", newItem: [] });
+    } else {
+      res.render("list", { ListTitle: "Today", newItem: foundItem });
     }
-    else
-    {
-        items.push(item);
-        res.redirect("/");
+  });
+});
 
+app.post("/", function (req, res) {
+  let itemName = req.body.add;
 
-    }
+  const item = new Item({
+    name: itemName,
+  });
 
-    
-})
+  item.save();
 
-app.get("/work", function(req,res){
+  res.redirect("/");
+});
 
-    res.render("list",{ListTitle: "Work List", newItem : workItems});
+// for deleting the item from list
 
-})
+app.post("/delete", function (req, res) {
+  // let itemName = req.body.add;
 
+  const itemId = req.body.checkbox;
 
+  Item.findByIdAndDelete(itemId).then(() => {
+    console.log("Item deleted");
+  });
 
-app.listen(3000 , function(){
-    console.log("Server is running on 3000");
-})
+  res.redirect("/");
+
+  // const item = new Item({
+  //   name: itemName,
+  // });
+
+  // item.deleteOne();
+});
+
+app.get("/work", function (req, res) {
+  res.render("list", { ListTitle: "Work List", newItem: workItems });
+});
+
+app.listen(3000, function () {
+  console.log("Server is running on 3000");
+});

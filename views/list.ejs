@@ -18,12 +18,20 @@
 
     <div class="lists">
         <ul>
-            <% for (let i = 0; i < newItem.length; i++) { %>
-                <div class="item">
-                    <input type="checkbox">
-                    <p><%= newItem[i] %></p>
-                </div>
-            <% } %>
+            <%  newItem.forEach((item)=>{%>
+
+                <form action="/delete" method="post">
+                    <div class="item">
+                        <input type="checkbox" value="<%= item._id %>" name="checkbox" onchange="this.form.submit()">
+                        <p><%= item.name %></p>
+                    </div>
+                </form>
+                
+           
+            
+           <% })  %> 
+
+            
         </ul>
     </div>
 
